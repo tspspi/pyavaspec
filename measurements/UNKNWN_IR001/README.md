@@ -1,23 +1,25 @@
 # Measurement of unknown infrared LED
 
 ```
-avacli plotformat svg measurebg dumpfbg background.dat plotfbg background.svg "Background" plotbg "Background" measure dumpf raw.dat plotf raw.svg "Raw signal" plot "Raw signal" bgsub moveavg peaks plotf peaks.svg "LED spectrum" plot "LED spectrum"
+avacli measurebg dumpfbg background.dat plotfbg background.png "Background" sleep 10 measure dumpf dataraw.dat plotf dataraw.png "Raw signal" bgsub dumpf datasub.dat plotf datasub.png "Background subtracted" moveavg dumpf dataavg.dat plotf dataavg.png "Averaged and subtracted signal" peaks plotf peaks.png "Peaks" dumpfpeak peaks.dat plot "Peaks"
 ```
 
-Later on generated the peaks data file:
+## Recorded background
 
-```
-avacli loadfbg background.dat loadf raw.dat bgsub moveavg peaks dumpfpeak peaks.dat
-```
-
-## Background
-
-![Measured background](./background.svg)
+![Recorded background](./background.svg)
 
 ## Raw signal
 
-![Raw measured signal](./raw.svg)
+![Recorded raw signal](./dataraw.svg)
 
-## Peak detector
+## Applied background subtraction
 
-![Detected peaks](./peaks.svg)
+![Background subtracted](./datasub.svg)
+
+## Applied moving average filter
+
+![Applied moving average filter](./dataavg.svg)
+
+## Performed peak detection
+
+![Peak detection result](./peaks.svg)
