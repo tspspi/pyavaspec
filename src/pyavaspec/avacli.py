@@ -1,7 +1,7 @@
 import sys
+import time
 from pyavaspec.pyavaspec import PyAvaSpec_2048_2
 from sdg1032x.sdg1032x import SDG1032X
-
 
 class PyAvaSpecCliException(Exception):
     pass
@@ -79,6 +79,14 @@ class PyAvaSpecCli:
                 raise PyAvaSpecCliException("SDG1032X frequency has to be positive")
         except ValueError:
             raise PyAvaSpecCliException("SDG1032X frequency {} is not a valid floating point expression".format(sys.argv[i+1]))
+
+    def parsevalidate_sleep(self, i):
+        try:
+            sleeptime = int(sys.argv[i+1])
+            if (sleeptime <= 0):
+                raise PyAvaSpecCliException("Sleep time has to be a positive number of seconds")
+        except ValueError:
+            raise PyAvaSpecCliException("Sleep time {} is not a valid numeric expression".format(sys.argv[i+1]))
 
 
     def exec_inttime(self, state, i):
@@ -396,6 +404,12 @@ class PyAvaSpecCli:
                 print("Failed to disable gate, no control device connected")
         return state
 
+    def exec_sleep(self, state, i):
+        sleeptime = int(sys.argv[i+1])
+        if state['cfg']['verbose']:
+            print("Sleeping for {} seconds".format(sleeptime))
+        time.sleep(sleeptime)
+        return state
 
     commandsAndOptions = {
         'inttime'          : { 'nargs' : 1, 'parsevalidate' : "parsevalidate_inttime",       'exec' : "exec_inttime",           'desc' : "Set integration time in milliseconds"                                          },
@@ -425,6 +439,7 @@ class PyAvaSpecCli:
         'peaks'            : { 'nargs' : 0,                                                  'exec' : "exec_peaks",             'desc' : "Perform peak search (usually requires subbg and moveavg)"                      },
         'gateon'           : { 'nargs' : 0,                                                  'exec' : "exec_GateOn",            'desc' : "Enable attached gate (SDG1032X or similar) - enable light source"              },
         'gateoff'          : { 'nargs' : 0,                                                  'exec' : "exec_GateOff",           'desc' : "Disable attached gate (SDG1032X or similar) - i.e. disable light source"       },
+        'sleep'            : { 'nargs' : 1, 'parsevalidate' : "parsevalidate_sleep",         'exec' : "exec_sleep",             'desc' : "Sleep for the specified amount of seconds before proceeding"                   },
 
         '--sdg1032xdev'    : { 'nargs' : 1,                                                  'exec' : "exec_SDG1032XDEV",       'desc' : "Select hostname or IP of SDG1032X function generator for gating"               },
         '--sdg1032xch'     : { 'nargs' : 1, 'parsevalidate' : "parsevalidate_sdg1032xCh",    'exec' : "exec_SDG1032XChannel",   'desc' : "Set channel of SDG1032X function generator for gate function"                  },
