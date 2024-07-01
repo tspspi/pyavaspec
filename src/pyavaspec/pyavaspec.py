@@ -3,20 +3,15 @@ import usb.core as usbcore
 
 from matplotlib import pyplot as plt
 
-
-# Only used for testing
-import sys
-
-# SIglent SiglentSDG1032X
-import socket
-import time
-
 class NetworkException(Exception):
     pass
 
 def close_event():
     # Only used during testing (remove from final code)
     plt.close()
+
+class PyAvaSpecCommunicationError(Exception):
+    pass
 
 class PyAvaSpecDeviceNotFoundException(Exception):
     pass
@@ -105,7 +100,7 @@ class PyAvaSpec_2048_2:
         dataBaseOffset = len(readData) - 2048*2
         newData = [ None ] * 2048
         for i in range(2048):
-            pxFrequency = 280 + i * 0.546875 + 19.67
+            #pxFrequency = 280 + i * 0.546875 + 19.67
             pxValue = readData[dataBaseOffset + 2*i + 1] * 256 + readData[dataBaseOffset + 2*i]
             newData[i] = pxValue
         return newData
@@ -175,7 +170,7 @@ class PyAvaSpec_2048_2:
         else:
             if showtimeout > 0:
                 fig = plt.figure()
-                time = fig.canvas.new_timer(interval = showtimeout)
+                timer = fig.canvas.new_timer(interval = showtimeout)
                 timer.add_callback(close_event)
                 timer.start()
             plt.show()
@@ -216,7 +211,7 @@ class PyAvaSpec_2048_2:
 
         # For each peak determine FWHM
         for pk in peaks:
-            halfMaxValid = True
+            #halfMaxValid = True
             halfMax = pk['counts'] / 2.0
             halfMaxLeftI = pk['idx']
             halfMaxRightI = pk['idx']
@@ -226,7 +221,8 @@ class PyAvaSpec_2048_2:
                 halfMaxRightI = halfMaxRightI + 1
 
             if (halfMaxLeftI == 0) or (halfMaxRightI == len(data) - 1):
-                halfMaxValid = False
+                #halfMaxValid = False
+                pass
             else:
                 pk['fwhm_leftidx'] = halfMaxLeftI
                 pk['fwhm_rightidx'] = halfMaxRightI
